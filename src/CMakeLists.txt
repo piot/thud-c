@@ -13,16 +13,6 @@ elseif (UNIX)
         set(OS_LINUX 1)
 endif()
 
-include_directories(${deps}monsoon/src/include)
-include_directories(${deps}tiny-libc/src/include) # needed from flood-c
-include_directories(${deps}flood-c/src/include)
-include_directories(${deps}clog/src/include)
-include_directories(${deps}basal-c/src/include)
-include_directories(${deps}tyran/src/include)
-include_directories(${deps}imprint/src/include)
-include_directories(${deps}thunder/src/include)
-include_directories(include)
-include_directories(external/include)
 
 file(GLOB_RECURSE deps_src FOLLOW_SYMLINKS
         "${deps}*/src/lib/*.c"
@@ -44,6 +34,20 @@ add_executable(thud_example
     ${lib_src}
     examples/main.c
 )
+
+target_include_directories(thud_example PRIVATE ${deps}monsoon/src/include)
+target_include_directories(thud_example PRIVATE ${deps}tiny-libc/src/include) # needed from flood-c
+target_include_directories(thud_example PRIVATE ${deps}flood-c/src/include)
+target_include_directories(thud_example PRIVATE ${deps}clog/src/include)
+target_include_directories(thud_example PRIVATE ${deps}basal-c/src/include)
+target_include_directories(thud_example PRIVATE ${deps}tyran/src/include)
+target_include_directories(thud_example PRIVATE ${deps}imprint/src/include)
+target_include_directories(thud_example PRIVATE ${deps}thunder/src/include)
+target_include_directories(thud_example PRIVATE include)
+target_include_directories(thud_example PRIVATE external/include)
+
+target_compile_definitions(thud_example PRIVATE CONFIGURATION_DEBUG TYRAN_CONFIGURATION_DEBUG)
+
 
 if (OS_LINUX)
         find_package (PulseAudio REQUIRED)
