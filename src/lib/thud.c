@@ -29,6 +29,7 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
 
     self->samples = tc_malloc_type_count(int16_t, decodedSamplesInStereo);
     self->sampleCount = decodedSamplesInStereo;
+    tc_memcpy_type_n((int16_t*) self->samples, tempSampleTarget, decodedSamplesInStereo);
 
     CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
 
