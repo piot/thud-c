@@ -1,0 +1,9 @@
+depsversion = "0.0.0"
+
+name = "piot/thud-c"
+version = "0.0.0"
+
+[[dependencies]]
+name = 'piot/monsoon'
+version = "*"
+
