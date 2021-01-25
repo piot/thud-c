@@ -2,6 +2,7 @@
  *  Copyright (c) Peter Bjorklund. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+#include <limits.h>
 #include <thud/synth.h>
 #include <thud/thud.h>
 
@@ -17,9 +18,9 @@ void thudSynth(void* _self, thunder_sample* sample, int sample_count)
         for (size_t voiceId = 0; voiceId < self->voiceCount; ++voiceId) {
             ThudVoice* voice = &self->voices[voiceId];
             if (!voice->isPlaying) {
-                if (voice->stereoSamples != 0) {
+                if (voice->stereoSamples != 0 && voice->keyIsPressed) {
                     voice->wait++;
-                    if (voice->wait > 32000) {
+                    if (voice->wait > 52000) {
                         voice->wait = 0;
                         voice->isPlaying = 1;
                     }
@@ -42,19 +43,51 @@ void thudSynthInit(ThudSynth* self)
 {
     thunder_audio_node_init(&self->stereo, thudSynth, self);
     self->voiceCount = 8;
+    self->time = 0;
     for (size_t i = 0; i < self->voiceCount; ++i) {
         self->voices[i].isPlaying = 0;
         self->voices[i].wait = 0;
         self->voices[i].index = 0;
+        self->voices[i].keyIsPressed = 0;
     }
 }
 
-void thudSynthSetVoice(ThudSynth* self, int index, const ThudSample* sample)
+void thudSynthPressVoice(ThudSynth* self, int index, const ThudSample* sample)
 {
     ThudVoice* voice = &self->voices[index];
     voice->sampleCount = sample->sampleCount;
     voice->index = 0;
     voice->isPlaying = 1;
     voice->stereoSamples = sample->samples;
-    self->voiceCount = 8;
+    voice->keyIsPressed = 1;
+    voice->startedAtTime = self->time++;
+}
+
+int thudSynthFindLeastUsedVoice(ThudSynth* self)
+{
+    for (size_t i = 0; i < self->voiceCount; ++i) {
+        const ThudVoice* voice = &self->voices[i];
+        if (!voice->isPlaying) {
+            return i;
+        }
+    }
+
+    int lowestTime = INT_MAX;
+    int bestVoice = -1;
+    for (size_t i = 0; i < self->voiceCount; ++i) {
+        const ThudVoice* voice = &self->voices[i];
+        if (voice->startedAtTime < lowestTime) {
+            bestVoice = i;
+            lowestTime = 0;
+            return i;
+        }
+    }
+
+    return bestVoice;
+}
+
+void thudSynthReleaseVoice(ThudSynth* self, int index)
+{
+    ThudVoice* voice = &self->voices[index];
+    voice->keyIsPressed = 0;
 }

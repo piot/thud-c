@@ -15,15 +15,20 @@ typedef struct ThudVoice {
     size_t index;
     int isPlaying;
     size_t wait;
+    int keyIsPressed;
+    int startedAtTime;
 } ThudVoice;
 
 typedef struct ThudSynth {
     thunder_audio_node stereo;
     ThudVoice voices[8];
     size_t voiceCount;
+    int time;
 } ThudSynth;
 
 void thudSynthInit(ThudSynth* self);
-void thudSynthSetVoice(ThudSynth* self, int index, const struct ThudSample* sample);
+void thudSynthPressVoice(ThudSynth* self, int index, const struct ThudSample* sample);
+void thudSynthReleaseVoice(ThudSynth* self, int index);
+int thudSynthFindLeastUsedVoice(ThudSynth* self);
 
 #endif // THUD_EXAMPLE_INCLUDE_THUD_SYNTH_H
