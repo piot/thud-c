@@ -13,7 +13,6 @@ elseif (UNIX)
         set(OS_LINUX 1)
 endif()
 
-
 file(GLOB_RECURSE deps_src FOLLOW_SYMLINKS
         "${deps}*/src/lib/*.c"
         )

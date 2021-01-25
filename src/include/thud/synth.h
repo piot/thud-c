@@ -8,6 +8,9 @@
 #include <thunder/audio_node.h>
 
 struct ThudSample;
+typedef uint16_t ThudVoiceInstanceHandle;
+
+#define THUD_ILLEGAL_VOICE_INSTANCE (0xffff)
 
 typedef struct ThudVoice {
     const int16_t* stereoSamples;
@@ -16,19 +19,23 @@ typedef struct ThudVoice {
     int isPlaying;
     size_t wait;
     int keyIsPressed;
-    int startedAtTime;
+    int isLooping;
+    uint64_t startedAtTime;
 } ThudVoice;
 
 typedef struct ThudSynth {
     thunder_audio_node stereo;
     ThudVoice voices[8];
-    size_t voiceCount;
+    size_t voiceCapacity;
+    size_t playingVoicesCount;
     int time;
 } ThudSynth;
 
 void thudSynthInit(ThudSynth* self);
 void thudSynthPressVoice(ThudSynth* self, int index, const struct ThudSample* sample);
 void thudSynthReleaseVoice(ThudSynth* self, int index);
+ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample);
+void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle);
 int thudSynthFindLeastUsedVoice(ThudSynth* self);
 
 #endif // THUD_EXAMPLE_INCLUDE_THUD_SYNTH_H

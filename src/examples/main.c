@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 
     unsigned char keys[8];
     unsigned char oldKeys[8];
-    int usedVoice[8];
+    ThudVoiceInstanceHandle usedVoice[8];
 
     memset(keys, 0, sizeof(keys));
     memset(oldKeys, 0, sizeof(keys));
@@ -184,11 +184,10 @@ int main(int argc, char* argv[])
             int wentDown = !oldKeys[i] && keys[i];
             int wentUp = oldKeys[i] && !keys[i];
             if (wentDown) {
-                int freeVoice = thudSynthFindLeastUsedVoice(&synth);
-                usedVoice[i] = freeVoice;
-                thudSynthPressVoice(&synth, freeVoice, &samples[i]);
+                usedVoice[i] = thudSynthKeyDown(&synth, &samples[i]);
             } else if (wentUp) {
-                thudSynthReleaseVoice(&synth, usedVoice[i]);
+                thudSynthKeyUp(&synth, usedVoice[i]);
+                usedVoice[i] = THUD_ILLEGAL_VOICE_INSTANCE;
             }
         }
 
