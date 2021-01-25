@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     soundModule.compositor.nodes[0] = synth.stereo;
     soundModule.compositor.nodes[0].is_playing = 1;
     soundModule.compositor.nodes[0].channel_count = 2;
-    soundModule.compositor.nodes[0].volume = 1.0;
+    soundModule.compositor.nodes[0].volume = 0.5;
     soundModule.compositor.nodes_count = 1;
 
     unsigned char keys[8];

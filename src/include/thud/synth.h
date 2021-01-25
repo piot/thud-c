@@ -17,7 +17,6 @@ typedef struct ThudVoice {
     size_t sampleCount;
     size_t index;
     int isPlaying;
-    size_t wait;
     int keyIsPressed;
     int isLooping;
     uint64_t startedAtTime;
@@ -27,7 +26,6 @@ typedef struct ThudSynth {
     thunder_audio_node stereo;
     ThudVoice voices[8];
     size_t voiceCapacity;
-    size_t playingVoicesCount;
     int time;
 } ThudSynth;
 

@@ -30,7 +30,6 @@ void thudSynth(void* _self, thunder_sample* sample, int sample_count)
             if (voice->index >= voice->sampleCount * 2) {
                 voice->index = 0;
                 voice->isPlaying = 0;
-                voice->wait = 0;
                 if (voice->isLooping && voice->keyIsPressed) {
                     voice->isPlaying = 1;
                 }
@@ -46,10 +45,8 @@ void thudSynthInit(ThudSynth* self)
     thunder_audio_node_init(&self->stereo, thudSynth, self);
     self->voiceCapacity = 2;
     self->time = 0;
-    self->playingVoicesCount = 0;
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
         self->voices[i].isPlaying = 0;
-        self->voices[i].wait = 0;
         self->voices[i].index = 0;
         self->voices[i].keyIsPressed = 0;
     }
