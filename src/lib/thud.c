@@ -5,8 +5,6 @@
 #include <clog/clog.h>
 #include <monsoon/monsoon.h>
 #include <thud/thud.h>
-#include <thunder/audio_node.h>
-#include <thunder/sound_buffer.h>
 #include <tiny-libc/tiny_libc.h>
 
 int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
@@ -27,9 +25,11 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
         return decodedSamplesInStereo;
     }
 
-    self->samples = tc_malloc_type_count(int16_t, decodedSamplesInStereo);
+    int individualMonoSamples = decodedSamplesInStereo * 2;
+
+    self->samples = tc_malloc_type_count(int16_t, individualMonoSamples);
     self->sampleCount = decodedSamplesInStereo;
-    tc_memcpy_type_n((int16_t*) self->samples, tempSampleTarget, decodedSamplesInStereo);
+    tc_memcpy_type_n((int16_t*) self->samples, tempSampleTarget, individualMonoSamples);
 
     CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
 

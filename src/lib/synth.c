@@ -29,7 +29,7 @@ void thudSynth(void* _self, thunder_sample* sample, int sample_count)
             }
             accumulator += voice->stereoSamples[voice->index];
             voice->index++;
-            if (voice->index >= voice->sampleCount) {
+            if (voice->index >= voice->sampleCount * 2) {
                 voice->index = 0;
                 voice->isPlaying = 0;
                 voice->wait = 0;
@@ -67,7 +67,7 @@ int thudSynthFindLeastUsedVoice(ThudSynth* self)
 {
     for (size_t i = 0; i < self->voiceCount; ++i) {
         const ThudVoice* voice = &self->voices[i];
-        if (!voice->isPlaying) {
+        if (!voice->isPlaying && !voice->keyIsPressed) {
             return i;
         }
     }
