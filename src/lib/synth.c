@@ -45,7 +45,7 @@ void thudSynthInit(ThudSynth* self)
     thunder_audio_node_init(&self->stereo, thudSynth, self);
     self->stereo.is_playing = 1;
     self->stereo.channel_count = 2;
-    self->stereo.volume = 0.8f;
+    self->stereo.volume = 0.5f;
     self->voiceCapacity = 2;
     self->time = 0;
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
