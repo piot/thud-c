@@ -43,6 +43,9 @@ void thudSynth(void* _self, thunder_sample* sample, int sample_count)
 void thudSynthInit(ThudSynth* self)
 {
     thunder_audio_node_init(&self->stereo, thudSynth, self);
+    self->stereo.is_playing = 1;
+    self->stereo.channel_count = 2;
+    self->stereo.volume = 0.8f;
     self->voiceCapacity = 2;
     self->time = 0;
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
@@ -86,11 +89,18 @@ int thudSynthFindLeastUsedVoice(ThudSynth* self)
     return bestVoice;
 }
 
-ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample)
+ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample, const ThudVoiceInfo* info)
 {
     int voiceIndex = thudSynthFindLeastUsedVoice(self);
-    const ThudVoice* voice = &self->voices[voiceIndex];
+    ThudVoice* voice = &self->voices[voiceIndex];
+
     thudSynthPressVoice(self, voiceIndex, sample);
+
+    if (info->loopCount == 0) {
+        voice->isLooping = 0;
+    } else {
+        voice->isLooping = 1;
+    }
 
     return ((voice->startedAtTime & 0xff) << 8 | (voiceIndex & 0xff));
 }

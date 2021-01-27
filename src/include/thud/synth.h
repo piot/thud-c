@@ -29,11 +29,18 @@ typedef struct ThudSynth {
     int time;
 } ThudSynth;
 
+typedef struct ThudVoiceInfo {
+    int loopCount;
+} ThudVoiceInfo;
+
 void thudSynthInit(ThudSynth* self);
+
 void thudSynthPressVoice(ThudSynth* self, int index, const struct ThudSample* sample);
 void thudSynthReleaseVoice(ThudSynth* self, int index);
-ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample);
+
+ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample, const ThudVoiceInfo* info);
 void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle);
+
 int thudSynthFindLeastUsedVoice(ThudSynth* self);
 
 #endif // THUD_EXAMPLE_INCLUDE_THUD_SYNTH_H
