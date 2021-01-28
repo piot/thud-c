@@ -60,7 +60,7 @@ void thudSynthPressVoice(ThudSynth* self, int index, const ThudSample* sample)
     ThudVoice* voice = &self->voices[index];
     voice->sampleCount = sample->sampleCount;
     voice->index = 0;
-    voice->isPlaying = 1;
+    voice->isPlaying = voice->sampleCount > 0;
     voice->stereoSamples = sample->samples;
     voice->keyIsPressed = 1;
     voice->startedAtTime = self->time++;
