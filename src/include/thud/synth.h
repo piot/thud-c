@@ -14,7 +14,7 @@ typedef uint16_t ThudVoiceInstanceHandle;
 
 typedef struct ThudVoice {
     const int16_t* stereoSamples;
-    size_t sampleCount;
+    size_t sampleCountInMono;
     size_t index;
     int isPlaying;
     int keyIsPressed;
@@ -35,8 +35,8 @@ typedef struct ThudVoiceInfo {
 
 void thudSynthInit(ThudSynth* self);
 
-void thudSynthPressVoice(ThudSynth* self, int index, const struct ThudSample* sample);
-void thudSynthReleaseVoice(ThudSynth* self, int index);
+void thudSynthPressVoice(ThudSynth* self, size_t index, const struct ThudSample* sample);
+void thudSynthReleaseVoice(ThudSynth* self, size_t index);
 
 ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample, const ThudVoiceInfo* info);
 void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle);

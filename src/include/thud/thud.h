@@ -11,6 +11,7 @@
 typedef struct ThudSample {
     const int16_t* samples;
     size_t sampleCount;
+    size_t channelCount;
 } ThudSample;
 
 int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount);
