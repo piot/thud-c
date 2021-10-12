@@ -32,7 +32,7 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
     self->channelCount = 2;
     tc_memcpy_type_n((int16_t*) self->samples, tempSampleTarget, individualMonoSamples);
 
-    CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
+    //CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
 
     return decodedSamplesInStereo;
 }

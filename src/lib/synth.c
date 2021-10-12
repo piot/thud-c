@@ -61,11 +61,12 @@ void thudSynthInit(ThudSynth* self)
         self->voices[i].index = 0;
         self->voices[i].keyIsPressed = 0;
     }
+
 }
 
 void thudSynthPressVoice(ThudSynth* self, size_t index, const ThudSample* sample)
 {
-    CLOG_VERBOSE("pressing voice %d", index);
+    //CLOG_VERBOSE("pressing voice %d", index);
     if (index >= self->voiceCapacity) {
         CLOG_ERROR("overwrite voices");
         return;
@@ -83,7 +84,7 @@ void thudSynthPressVoice(ThudSynth* self, size_t index, const ThudSample* sample
         CLOG_ERROR("isplayiung is wrong after set");
     }
 
-    CLOG_VERBOSE("sampleCount:%d", voice->sampleCountInMono);
+    //CLOG_VERBOSE("sampleCount:%d", voice->sampleCountInMono);
 }
 
 int thudSynthFindLeastUsedVoice(ThudSynth* self)
@@ -111,7 +112,7 @@ int thudSynthFindLeastUsedVoice(ThudSynth* self)
 ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample, const ThudVoiceInfo* info)
 {
     int voiceIndex = thudSynthFindLeastUsedVoice(self);
-    CLOG_VERBOSE("found free voice %d", voiceIndex);
+    //CLOG_VERBOSE("found free voice %d", voiceIndex);
     ThudVoice* voice = &self->voices[voiceIndex];
 
     thudSynthPressVoice(self, voiceIndex, sample);
