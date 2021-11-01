@@ -20,4 +20,7 @@ typedef struct Thud {
     ThudSample samples[64];
 } Thud;
 
+int thudInit(Thud* self);
+int thudUpdate(Thud* self);
+
 #endif

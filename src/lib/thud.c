@@ -42,7 +42,7 @@ int thudInit(Thud* self)
     return 0;
 }
 
-int thudUpdate()
+int thudUpdate(Thud* self)
 {
     return 0;
 }
