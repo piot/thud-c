@@ -17,7 +17,7 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
     }
 
     #define tempSize (512 * 1024)
-    int16_t tempSampleTarget[tempSize];
+    static int16_t tempSampleTarget[tempSize];
 
     int decodedSamplesInStereo = monsoonDecodeAll(&monsoon, tempSampleTarget, tempSize / 2);
     if (decodedSamplesInStereo <= 0) {
