@@ -8,7 +8,7 @@
 #include <thud/thud.h>
 
 // thunder_audio_node_output_func
-void thudSynth(void* _self, thunder_sample* sample, int sample_count)
+static void thudSynth(void* _self, thunder_sample* sample, int sample_count)
 {
     ThudSynth* self = (ThudSynth*) _self;
 
@@ -136,7 +136,7 @@ void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle)
     int timeSuffix = (handle >> 8) & 0xff;
 
     if (voiceIndex >= self->voiceCapacity) {
-        CLOG_ERROR("overwrite voices");
+        CLOG_ERROR("overwrite voices")
         return;
     }
 
