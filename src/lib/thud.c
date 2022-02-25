@@ -21,7 +21,7 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
 
     int decodedSamplesInStereo = monsoonDecodeAll(&monsoon, tempSampleTarget, tempSize / 2);
     if (decodedSamplesInStereo <= 0) {
-        CLOG_VERBOSE("could not decode %d", decodedSamplesInStereo);
+        CLOG_VERBOSE("could not decode %d", decodedSamplesInStereo)
         return decodedSamplesInStereo;
     }
 

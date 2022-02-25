@@ -81,7 +81,7 @@ void thudSynthPressVoice(ThudSynth* self, size_t index, const ThudSample* sample
     voice->isLooping = 1;
 
     if (voice->isPlaying != 0 && voice->isPlaying != 1) {
-        CLOG_ERROR("isplayiung is wrong after set");
+        CLOG_ERROR("isplaying is wrong after set")
     }
 
     //CLOG_VERBOSE("sampleCount:%d", voice->sampleCountInMono);
@@ -154,7 +154,7 @@ void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle)
 void thudSynthReleaseVoice(ThudSynth* self, size_t voiceIndex)
 {
     if (voiceIndex >= self->voiceCapacity) {
-        CLOG_ERROR("overwrite voices");
+        CLOG_ERROR("overwrite voices")
         return;
     }
     ThudVoice* voice = &self->voices[voiceIndex];
