@@ -6,6 +6,7 @@
 #define THUD_EXAMPLE_INCLUDE_THUD_SYNTH_H
 
 #include <thunder/audio_node.h>
+#include <stddef.h>
 
 struct ThudSample;
 typedef uint16_t ThudVoiceInstanceHandle;
