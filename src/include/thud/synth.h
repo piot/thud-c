@@ -24,7 +24,7 @@ typedef struct ThudVoice {
 } ThudVoice;
 
 typedef struct ThudSynth {
-    thunder_audio_node stereo;
+    ThunderAudioNode stereo;
     ThudVoice voices[8];
     size_t voiceCapacity;
     int time;

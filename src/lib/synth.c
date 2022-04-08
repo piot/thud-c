@@ -7,17 +7,17 @@
 #include <thud/synth.h>
 #include <thud/thud.h>
 
-// thunder_audio_node_output_func
-static void thudSynth(void* _self, thunder_sample* sample, int sample_count)
+// ThunderAudioNodeOutputFunc
+static void thudSynth(void* _self, ThunderSample* sample, int sample_count)
 {
     ThudSynth* self = (ThudSynth*) _self;
 
-    thunder_sample* p = sample;
+    ThunderSample* p = sample;
 
     int divisor = 0;
 
     for (size_t i = 0; i < sample_count * 2; ++i) {
-        thunder_mix_sample accumulator = 0;
+        ThunderMixSample accumulator = 0;
         divisor = 0;
         for (size_t voiceId = 0; voiceId < self->voiceCapacity; ++voiceId) {
             if (self->voiceCapacity > 3) {
