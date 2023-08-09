@@ -2,14 +2,14 @@
  *  Copyright (c) Peter Bjorklund. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-#ifndef THUD_H
-#define THUD_H
+#ifndef THUD_THUD_H
+#define THUD_THUD_H
 
 #include <stddef.h>
 #include <stdint.h>
 
 typedef struct ThudSample {
-    const int16_t* samples;
+    int16_t* samples;
     size_t sampleCount;
     size_t channelCount;
 } ThudSample;

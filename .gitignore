@@ -1,2 +1,4 @@
 deps*/
-
+cmake-build-*/
+src/examples/thud-test
+src/lib/libthud.a

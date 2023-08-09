@@ -7,3 +7,6 @@ version = "0.0.0"
 name = 'piot/monsoon'
 version = "*"
 
+[[dependencies]]
+name = 'piot/thunder'
+version = "*"

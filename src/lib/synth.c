@@ -6,9 +6,10 @@
 #include <limits.h>
 #include <thud/synth.h>
 #include <thud/thud.h>
+#include <thunder/audio_node.h>
 
 // ThunderAudioNodeOutputFunc
-static void thudSynth(void* _self, ThunderSample* sample, int sample_count)
+static void thudSynth(void* _self, ThunderSample* sample, size_t sample_count)
 {
     ThudSynth* self = (ThudSynth*) _self;
 
@@ -25,7 +26,7 @@ static void thudSynth(void* _self, ThunderSample* sample, int sample_count)
             }
             ThudVoice* voice = &self->voices[voiceId];
 
-            if (voice->isPlaying != 0 &&voice->isPlaying != 1) {
+            if (voice->isPlaying != 0 && voice->isPlaying != 1) {
                 CLOG_ERROR("break. isplaying is wrong")
             }
 
@@ -44,13 +45,13 @@ static void thudSynth(void* _self, ThunderSample* sample, int sample_count)
             }
         }
 
-        *p++ = divisor == 0 ? 0 : accumulator / divisor;
+        *p++ = divisor == 0 ? 0 : ((ThunderSample) accumulator / (ThunderSample) divisor);
     }
 }
 
 void thudSynthInit(ThudSynth* self)
 {
-    thunder_audio_node_init(&self->stereo, thudSynth, self);
+    thunderAudioNodeInit(&self->stereo, thudSynth, self);
     self->stereo.is_playing = 1;
     self->stereo.channel_count = 2;
     self->stereo.volume = 0.3f;
@@ -61,15 +62,13 @@ void thudSynthInit(ThudSynth* self)
         self->voices[i].index = 0;
         self->voices[i].keyIsPressed = 0;
     }
-
 }
 
 void thudSynthPressVoice(ThudSynth* self, size_t index, const ThudSample* sample)
 {
-    //CLOG_VERBOSE("pressing voice %d", index);
+    // CLOG_VERBOSE("pressing voice %d", index);
     if (index >= self->voiceCapacity) {
-        CLOG_ERROR("overwrite voices");
-        return;
+        CLOG_ERROR("overwrite voices")
     }
     ThudVoice* voice = &self->voices[index];
     voice->sampleCountInMono = sample->sampleCount * sample->channelCount;
@@ -84,10 +83,10 @@ void thudSynthPressVoice(ThudSynth* self, size_t index, const ThudSample* sample
         CLOG_ERROR("isplaying is wrong after set")
     }
 
-    //CLOG_VERBOSE("sampleCount:%d", voice->sampleCountInMono);
+    // CLOG_VERBOSE("sampleCount:%d", voice->sampleCountInMono);
 }
 
-int thudSynthFindLeastUsedVoice(ThudSynth* self)
+size_t thudSynthFindLeastUsedVoice(ThudSynth* self)
 {
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
         const ThudVoice* voice = &self->voices[i];
@@ -97,7 +96,7 @@ int thudSynthFindLeastUsedVoice(ThudSynth* self)
     }
 
     uint64_t lowestTime = INT64_MAX;
-    int bestVoice = -1;
+    size_t bestVoice = SIZE_T_MAX;
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
         const ThudVoice* voice = &self->voices[i];
         if (voice->startedAtTime < lowestTime) {
@@ -111,8 +110,11 @@ int thudSynthFindLeastUsedVoice(ThudSynth* self)
 
 ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSample* sample, const ThudVoiceInfo* info)
 {
-    int voiceIndex = thudSynthFindLeastUsedVoice(self);
-    //CLOG_VERBOSE("found free voice %d", voiceIndex);
+    size_t voiceIndex = thudSynthFindLeastUsedVoice(self);
+    if (voiceIndex >= self->voiceCapacity) {
+        return 0;
+    }
+    // CLOG_VERBOSE("found free voice %d", voiceIndex);
     ThudVoice* voice = &self->voices[voiceIndex];
 
     thudSynthPressVoice(self, voiceIndex, sample);
@@ -123,7 +125,7 @@ ThudVoiceInstanceHandle thudSynthKeyDown(ThudSynth* self, const struct ThudSampl
         voice->isLooping = 1;
     }
 
-    return ((voice->startedAtTime & 0xff) << 8 | (voiceIndex & 0xff));
+    return ((ThudVoiceInstanceHandle) ((voice->startedAtTime & 0xff) << 8 | (voiceIndex & 0xff)));
 }
 
 void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle)
@@ -137,7 +139,6 @@ void thudSynthKeyUp(ThudSynth* self, ThudVoiceInstanceHandle handle)
 
     if (voiceIndex >= self->voiceCapacity) {
         CLOG_ERROR("overwrite voices")
-        return;
     }
 
     ThudVoice* voice = &self->voices[voiceIndex];
@@ -155,7 +156,6 @@ void thudSynthReleaseVoice(ThudSynth* self, size_t voiceIndex)
 {
     if (voiceIndex >= self->voiceCapacity) {
         CLOG_ERROR("overwrite voices")
-        return;
     }
     ThudVoice* voice = &self->voices[voiceIndex];
     voice->keyIsPressed = 0;

@@ -16,7 +16,7 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
         return errorCode;
     }
 
-    #define tempSize (512 * 1024)
+#define tempSize (512 * 1024)
     static int16_t tempSampleTarget[tempSize];
 
     int decodedSamplesInStereo = monsoonDecodeAll(&monsoon, tempSampleTarget, tempSize / 2);
@@ -25,24 +25,26 @@ int thudLoadSample(ThudSample* self, const uint8_t* data, size_t octetCount)
         return decodedSamplesInStereo;
     }
 
-    int individualMonoSamples = decodedSamplesInStereo * 2;
+    size_t individualMonoSamples = (size_t) (decodedSamplesInStereo * 2);
 
     self->samples = tc_malloc_type_count(int16_t, individualMonoSamples);
-    self->sampleCount = decodedSamplesInStereo;
+    self->sampleCount = (size_t) decodedSamplesInStereo;
     self->channelCount = 2;
     tc_memcpy_type_n((int16_t*) self->samples, tempSampleTarget, individualMonoSamples);
 
-    //CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
+    // CLOG_VERBOSE("loaded %d samples", decodedSamplesInStereo);
 
     return decodedSamplesInStereo;
 }
 
 int thudInit(Thud* self)
 {
+    (void) self;
     return 0;
 }
 
 int thudUpdate(Thud* self)
 {
+    (void) self;
     return 0;
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 #include <clog/clog.h>
 #include <clog/console.h>
-#include <imprint/memory.h>
+#include <imprint/default_setup.h>
 #include <thud/synth.h>
 #include <thud/thud.h>
 #include <thunder/sound_module.h>
@@ -14,6 +14,7 @@
 #include <termios.h>
 
 clog_config g_clog;
+char g_clog_temp_str[CLOG_TEMP_STR_SIZE];
 
 static int readWholeFile(const char* filename, const uint8_t** outOctets, size_t* outSize)
 {
@@ -62,8 +63,11 @@ int readButton(int fd, unsigned char keys[8])
     int res = select(fd + 1, &set, 0, 0, &tv);
 
     if (res > 0) {
-        int n = read(fd, buf, sizeof(buf));
-        for (int i = 0; i < n; i++) {
+        ssize_t n = read(fd, buf, sizeof(buf));
+        if (n < 0) {
+            return -1;
+        }
+        for (ssize_t i = 0; i < n; i++) {
             unsigned char raw = buf[i];
             unsigned char key = raw & 0x7f;
 
@@ -113,7 +117,7 @@ int loadSamples(ThudSample samples[8], const char* names[8])
     for (size_t i = 0; i < 8; ++i) {
         int errorCode = readWholeFile(names[i], &opusOctets, &opusSize);
         if (errorCode < 0) {
-            CLOG_VERBOSE("can not find multiball");
+            CLOG_VERBOSE("can not find '%s'", names[i]);
             return errorCode;
         }
 
@@ -129,6 +133,7 @@ int loadSamples(ThudSample samples[8], const char* names[8])
 
 int main(int argc, char* argv[])
 {
+    g_clog.level = CLOG_TYPE_VERBOSE;
     g_clog.log = clog_console;
 
     int fd = STDIN_FILENO;
@@ -136,11 +141,11 @@ int main(int argc, char* argv[])
     struct termios old;
     turnOffEcho(fd, &old);
 
-    thunder_sound_module soundModule;
-    imprint_memory memory;
-    imprint_memory_init(&memory, 256 * 1024, "thunder sound module");
+    ThunderSoundModule soundModule;
+    ImprintDefaultSetup memory;
+    imprintDefaultSetupInit(&memory, 256 * 1024);
 
-    thunder_sound_module_init(&soundModule, &memory);
+    thunderSoundModuleInit(&soundModule, &memory.tagAllocator.info);
 
     const char* names[8] = {"multiball.opus", "powerup.opus",   "two.opus",       "multiball.opus",
                             "multiball.opus", "multiball.opus", "multiball.opus", "multiball.opus"};
@@ -156,8 +161,8 @@ int main(int argc, char* argv[])
     soundModule.compositor.nodes[0] = synth.stereo;
     soundModule.compositor.nodes[0].is_playing = 1;
     soundModule.compositor.nodes[0].channel_count = 2;
-    soundModule.compositor.nodes[0].volume = 0.5;
-    soundModule.compositor.nodes_count = 1;
+    soundModule.compositor.nodes[0].volume = 0.5f;
+    soundModule.compositor.nodesCount = 1;
 
     unsigned char keys[8];
     unsigned char oldKeys[8];
@@ -180,11 +185,14 @@ int main(int argc, char* argv[])
             break;
         }
 
+        ThudVoiceInfo voiceInfo;
+        voiceInfo.loopCount = 0;
+
         for (size_t i = 1; i < 8; ++i) {
             int wentDown = !oldKeys[i] && keys[i];
             int wentUp = oldKeys[i] && !keys[i];
             if (wentDown) {
-                usedVoice[i] = thudSynthKeyDown(&synth, &samples[i]);
+                usedVoice[i] = thudSynthKeyDown(&synth, &samples[i], &voiceInfo);
             } else if (wentUp) {
                 thudSynthKeyUp(&synth, usedVoice[i]);
                 usedVoice[i] = THUD_ILLEGAL_VOICE_INSTANCE;
@@ -193,8 +201,8 @@ int main(int argc, char* argv[])
 
         memcpy(oldKeys, keys, sizeof(oldKeys));
 
-        thunder_sound_module_update(&soundModule);
-        usleep(1000);
+        thunderSoundModuleUpdate(&soundModule);
+        usleep(16 * 1000);
     }
 
     if (tcsetattr(fd, TCSANOW, &old) < 0) {
