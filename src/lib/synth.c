@@ -96,7 +96,7 @@ size_t thudSynthFindLeastUsedVoice(ThudSynth* self)
     }
 
     uint64_t lowestTime = INT64_MAX;
-    size_t bestVoice = SIZE_T_MAX;
+    size_t bestVoice = SIZE_MAX;
     for (size_t i = 0; i < self->voiceCapacity; ++i) {
         const ThudVoice* voice = &self->voices[i];
         if (voice->startedAtTime < lowestTime) {
