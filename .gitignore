@@ -2,3 +2,8 @@ deps*/
 cmake-build-*/
 src/examples/thud-test
 src/lib/libthud.a
+CMakeCache.txt
+.vscode/
+.idea/
+build/
+.cmake/
